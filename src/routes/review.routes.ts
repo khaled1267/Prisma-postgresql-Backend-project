@@ -103,7 +103,7 @@ router.put(
       const { rating, comment } = req.body;
 
       const review = await updateReview(
-        req.params.id,
+        req.params.id as string,
         req.user!.userId,
         {
           rating:
@@ -138,7 +138,7 @@ router.delete(
       const isAdmin = req.user!.role === UserRole.ADMIN;
 
       await deleteReview(
-        req.params.id,
+        req.params.id as string,
         req.user!.userId,
         isAdmin
       );

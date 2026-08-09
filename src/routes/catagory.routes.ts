@@ -76,7 +76,7 @@ router.get("/", async (req: Request, res: Response) => {
 // Get Category By ID - Public
 router.get("/:id", async (req: Request, res: Response) => {
   try {
-    const category = await getCategoryById(req.params.id);
+    const category = await getCategoryById(req.params.id as string);
 
     return res.status(200).json({
       success: true,
@@ -110,7 +110,7 @@ router.put(
         });
       }
 
-      const category = await updateCategory(req.params.id, {
+      const category = await updateCategory(req.params.id as string, {
         name,
         description,
       });
@@ -139,7 +139,7 @@ router.delete(
   authorize(UserRole.ADMIN),
   async (req: Request, res: Response) => {
     try {
-      await deleteCategory(req.params.id);
+      await deleteCategory(req.params.id as string);
 
       return res.status(200).json({
         success: true,

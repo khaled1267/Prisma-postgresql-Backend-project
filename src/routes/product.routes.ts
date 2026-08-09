@@ -87,7 +87,7 @@ router.get("/", async (req: Request, res: Response) => {
 // Get Product By ID - Public
 router.get("/:id", async (req: Request, res: Response) => {
   try {
-    const product = await getProductById(req.params.id);
+    const product = await getProductById(req.params.id as string);
 
     return res.status(200).json({
       success: true,
@@ -121,7 +121,7 @@ router.put(
         categoryId,
       } = req.body;
 
-      const product = await updateProduct(req.params.id, {
+      const product = await updateProduct(req.params.id as string, {
         title,
         description,
         price:
@@ -160,7 +160,7 @@ router.delete(
   authorize(UserRole.ADMIN),
   async (req: Request, res: Response) => {
     try {
-      await deleteProduct(req.params.id);
+      await deleteProduct(req.params.id as string);
 
       return res.status(200).json({
         success: true,

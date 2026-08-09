@@ -46,7 +46,7 @@ router.get(
   authorize(UserRole.ADMIN),
   async (req: Request, res: Response) => {
     try {
-      const user = await getUserById(req.params.id);
+      const user = await getUserById(req.params.id as string);
 
       return res.status(200).json({
         success: true,
@@ -81,7 +81,7 @@ router.put(
         });
       }
 
-      const user = await updateUser(req.params.id, {
+      const user = await updateUser(req.params.id as string, {
         name,
         email,
       });
@@ -110,7 +110,7 @@ router.delete(
   authorize(UserRole.ADMIN),
   async (req: Request, res: Response) => {
     try {
-      await deleteUser(req.params.id);
+      await deleteUser(req.params.id as string);
 
       return res.status(200).json({
         success: true,

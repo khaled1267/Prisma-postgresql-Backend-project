@@ -1,16 +1,25 @@
 import { Router, Request, Response } from "express";
-import {  loginUser } from "../services/auth.service";
-import { registerUser } from "../services/auth.service";
-
+import {
+  loginUser,
+  registerUser,
+  UserAlreadyExistsError,
+} from "../services/auth.service";
 
 const router = Router();
 
 // Register
 router.post("/register", async (req: Request, res: Response) => {
   try {
-    const { name, email, password } = req.body;
+    const { name, email, password } = req.body ?? {};
 
-    if (!name || !email || !password) {
+    if (
+      typeof name !== "string" ||
+      typeof email !== "string" ||
+      typeof password !== "string" ||
+      !name.trim() ||
+      !email.trim() ||
+      !password
+    ) {
       return res.status(400).json({
         success: false,
         message: "Name, email and password are required",
@@ -18,8 +27,8 @@ router.post("/register", async (req: Request, res: Response) => {
     }
 
     const user = await registerUser({
-      name,
-      email,
+      name: name.trim(),
+      email: email.trim(),
       password,
     });
 
@@ -29,12 +38,18 @@ router.post("/register", async (req: Request, res: Response) => {
       data: user,
     });
   } catch (error) {
-    const message =
-      error instanceof Error ? error.message : "Something went wrong";
+    if (error instanceof UserAlreadyExistsError) {
+      return res.status(409).json({
+        success: false,
+        message: error.message,
+      });
+    }
 
-    return res.status(400).json({
+    console.error("Registration failed:", error);
+
+    return res.status(500).json({
       success: false,
-      message,
+      message: "Unable to register user. Please try again later.",
     });
   }
 });

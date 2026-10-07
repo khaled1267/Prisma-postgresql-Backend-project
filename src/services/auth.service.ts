@@ -13,6 +13,13 @@ interface LoginInput {
   password: string;
 }
 
+export class UserAlreadyExistsError extends Error {
+  constructor() {
+    super("User with this email already exists");
+    this.name = "UserAlreadyExistsError";
+  }
+}
+
 export const registerUser = async (data: RegisterInput) => {
   const { name, email, password } = data;
 
@@ -23,7 +30,7 @@ export const registerUser = async (data: RegisterInput) => {
   });
 
   if (existingUser) {
-    throw new Error("User with this email already exists");
+    throw new UserAlreadyExistsError();
   }
 
   const hashedPassword = await bcrypt.hash(password, 10);

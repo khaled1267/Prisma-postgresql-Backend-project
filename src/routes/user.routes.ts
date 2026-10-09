@@ -72,18 +72,33 @@ router.put(
   authorize(UserRole.ADMIN),
   async (req: Request, res: Response) => {
     try {
-      const { name, email } = req.body;
+      const { name, email, role } = req.body ?? {};
 
-      if (!name && !email) {
+      if (
+        name === undefined &&
+        email === undefined &&
+        role === undefined
+      ) {
         return res.status(400).json({
           success: false,
-          message: "Name or email is required",
+          message: "Name, email or role is required",
+        });
+      }
+
+      if (
+        role !== undefined &&
+        !Object.values(UserRole).includes(role)
+      ) {
+        return res.status(400).json({
+          success: false,
+          message: "Role must be CUSTOMER or ADMIN",
         });
       }
 
       const user = await updateUser(req.params.id as string, {
         name,
         email,
+        role,
       });
 
       return res.status(200).json({

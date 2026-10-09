@@ -136,6 +136,17 @@ Authorization: Bearer YOUR_JWT_TOKEN
 | `PUT` | `/api/users/:id` | Update user | ADMIN |
 | `DELETE` | `/api/users/:id` | Soft delete user | ADMIN |
 
+An ADMIN can update a user's role through `PUT /api/users/:id`:
+```json
+{
+  "role": "ADMIN"
+}
+```
+
+Public registration always creates a `CUSTOMER`. Only an authenticated
+administrator can promote a user, and the last active administrator cannot be
+demoted.
+
 ---
 
 ## Category API

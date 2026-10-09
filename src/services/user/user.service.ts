@@ -1,8 +1,10 @@
 import prisma from "../../lib/prisma";
+import { UserRole } from "@prisma/client";
 
 interface UpdateUserInput {
   name?: string;
   email?: string;
+  role?: UserRole;
 }
 
 // Get All Users
@@ -65,6 +67,22 @@ export const updateUser = async (
 
   if (!user) {
     throw new Error("User not found");
+  }
+
+  if (
+    data.role === UserRole.CUSTOMER &&
+    user.role === UserRole.ADMIN
+  ) {
+    const adminCount = await prisma.user.count({
+      where: {
+        role: UserRole.ADMIN,
+        isDeleted: false,
+      },
+    });
+
+    if (adminCount <= 1) {
+      throw new Error("Cannot remove the last active administrator");
+    }
   }
 
   if (data.email) {
